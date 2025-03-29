@@ -1,86 +1,256 @@
-// ... existing code ...
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter Generator Tool</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
 
-// Generate config.js content
-function generateConfigJS() {
-    const chapterInfo = {
-        title: document.getElementById('chapter-title').value || 'Chapter Title',
-        subject: document.getElementById('subject').value || 'Subject',
-        class: document.getElementById('class-level').value || 'Class Level',
-        chapter: parseInt(document.getElementById('chapter-number').value) || 1,
-        description: document.getElementById('chapter-description').value || 'Chapter description'
-    };
-    
-    // Get highlights
-    const highlights = [];
-    document.querySelectorAll('#highlights-container .highlight-item').forEach(item => {
-        highlights.push({
-            icon: item.querySelector('.highlight-icon').value || 'fas fa-star',
-            text: item.querySelector('.highlight-text').value || 'Highlight point'
-        });
-    });
-    
-    // Get about content
-    const aboutContent = document.getElementById('about-content').value || '<p>About this chapter</p>';
-    
-    // Get topics
-    const topics = [];
-    document.querySelectorAll('#topics-container .topic-item').forEach((item, index) => {
-        const topicId = item.querySelector('.topic-id').value || `topic${index + 1}`;
-        const topicTitle = item.querySelector('.topic-title').value || `Topic ${index + 1}`;
-        const navTitle = item.querySelector('.topic-navtitle').value || topicTitle;
-        const icon = item.querySelector('.topic-icon').value || 'fas fa-book';
-        const image = item.querySelector('.topic-image').value || '';
-        const content = item.querySelector('.topic-content').value || '<p>Topic content</p>';
-        
-        // Get question options
-        const questionText = item.querySelector('.topic-question-text').value;
-        const options = [];
-        item.querySelectorAll('.topic-option').forEach(option => {
-            if (option.value.trim()) {
-                options.push(option.value);
-            }
-        });
-        
-        // Only include question if text and options are provided
-        let question = null;
-        if (questionText && options.length > 0) {
-            question = {
-                text: questionText,
-                options: options,
-                correctAnswer: 0 // First option is always correct
-            };
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
+
+        h1, h2, h3 {
+            color: #9b59b6;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input[type="text"], input[type="number"], select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        textarea {
+            min-height: 100px;
+        }
+
+        button {
+            background-color: #9b59b6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px 0;
+        }
+
+        button:hover {
+            background-color: #8e44ad;
+        }
+
+        .simple-form {
+            display: block;
+            width: 100%;
+        }
+
+        .output-code {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            white-space: pre;
+            overflow-x: auto;
+            font-family: monospace;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><i class="fas fa-book"></i> Simple Chapter Generator</h1>
+        <p>Fill out the form to generate config.js and questions.js content</p>
         
-        topics.push({
-            id: topicId,
-            title: topicTitle,
-            icon: icon,
-            navTitle: navTitle,
-            image: image,
-            content: content,
-            question: question
-        });
-    });
-    
-    // Get vocabulary
-    const vocabulary = [];
-    document.querySelectorAll('#vocabulary-container .vocab-item').forEach(item => {
-        const word = item.querySelector('.vocab-word').value;
-        const definition = item.querySelector('.vocab-definition').value;
+        <form id="chapter-form" class="simple-form">
+            <h2>Chapter Information</h2>
+            <div class="form-group">
+                <label for="chapter-title">Chapter Title</label>
+                <input type="text" id="chapter-title" placeholder="e.g., All in the Family">
+            </div>
+            
+            <div class="form-group">
+                <label for="subject">Subject</label>
+                <input type="text" id="subject" placeholder="e.g., EVS">
+            </div>
+            
+            <div class="form-group">
+                <label for="class-level">Class Level</label>
+                <input type="text" id="class-level" placeholder="e.g., Class 4">
+            </div>
+            
+            <div class="form-group">
+                <label for="chapter-number">Chapter Number</label>
+                <input type="number" id="chapter-number" placeholder="e.g., 1" min="1">
+            </div>
+            
+            <div class="form-group">
+                <label for="chapter-description">Chapter Description</label>
+                <textarea id="chapter-description" placeholder="Brief description of what students will learn in this chapter"></textarea>
+            </div>
+            
+            <h2>Topics (add 3-5)</h2>
+            <div id="topics-container">
+                <div class="form-group">
+                    <label for="topic1-title">Topic 1 Title</label>
+                    <input type="text" id="topic1-title" placeholder="e.g., Vasu's Family Album">
+                </div>
+                <div class="form-group">
+                    <label for="topic1-content">Topic 1 Content</label>
+                    <textarea id="topic1-content" placeholder="HTML content for this topic"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="topic2-title">Topic 2 Title</label>
+                    <input type="text" id="topic2-title" placeholder="e.g., People Change As They Grow">
+                </div>
+                <div class="form-group">
+                    <label for="topic2-content">Topic 2 Content</label>
+                    <textarea id="topic2-content" placeholder="HTML content for this topic"></textarea>
+                </div>
+            </div>
+            
+            <h2>Vocabulary</h2>
+            <div id="vocabulary-container">
+                <div class="form-group">
+                    <label for="word1">Word 1</label>
+                    <input type="text" id="word1" placeholder="e.g., tracksuit">
+                </div>
+                <div class="form-group">
+                    <label for="def1">Definition 1</label>
+                    <input type="text" id="def1" placeholder="e.g., a loose set of clothes worn by sportspersons">
+                </div>
+            </div>
+            
+            <h2>Multiple Choice Questions (add 5+)</h2>
+            <div id="mcq-container">
+                <div class="form-group">
+                    <label for="mcq1">Question 1</label>
+                    <input type="text" id="mcq1" placeholder="e.g., What did Vasu see in his mother's photo album?">
+                </div>
+                <div class="form-group">
+                    <label for="mcq1-opt1">Option 1 (correct)</label>
+                    <input type="text" id="mcq1-opt1" placeholder="e.g., His mother as an athlete in a tracksuit">
+                </div>
+                <div class="form-group">
+                    <label for="mcq1-opt2">Option 2</label>
+                    <input type="text" id="mcq1-opt2" placeholder="e.g., His mother as a teacher">
+                </div>
+                <div class="form-group">
+                    <label for="mcq1-opt3">Option 3</label>
+                    <input type="text" id="mcq1-opt3" placeholder="e.g., His mother as a doctor">
+                </div>
+            </div>
+            
+            <button type="button" id="generate-btn">Generate Code</button>
+        </form>
         
-        if (word && definition) {
-            vocabulary.push({
-                word: word,
-                definition: definition
+        <div id="output" class="hidden">
+            <h2>Generated Code</h2>
+            <h3>config.js</h3>
+            <pre class="output-code" id="config-output"></pre>
+            
+            <h3>questions.js</h3>
+            <pre class="output-code" id="questions-output"></pre>
+            
+            <button id="download-btn">Download Files</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const generateBtn = document.getElementById('generate-btn');
+            const downloadBtn = document.getElementById('download-btn');
+            
+            generateBtn.addEventListener('click', function() {
+                // Generate code based on form inputs
+                const configOutput = generateConfig();
+                const questionsOutput = generateQuestions();
+                
+                // Display the output
+                document.getElementById('config-output').textContent = configOutput;
+                document.getElementById('questions-output').textContent = questionsOutput;
+                document.getElementById('output').classList.remove('hidden');
             });
-        }
-    });
-    
-    // Generate the config code
-    return `/**
+            
+            downloadBtn.addEventListener('click', function() {
+                // Download config.js
+                downloadFile('config.js', document.getElementById('config-output').textContent);
+                
+                // Download questions.js after a short delay
+                setTimeout(function() {
+                    downloadFile('questions.js', document.getElementById('questions-output').textContent);
+                }, 500);
+            });
+        });
+        
+        function generateConfig() {
+            const chapterTitle = document.getElementById('chapter-title').value || 'Chapter Title';
+            const subject = document.getElementById('subject').value || 'Subject';
+            const classLevel = document.getElementById('class-level').value || 'Class Level';
+            const chapterNumber = document.getElementById('chapter-number').value || 1;
+            const description = document.getElementById('chapter-description').value || 'Chapter description';
+            
+            // Get topics
+            const topics = [];
+            const topic1Title = document.getElementById('topic1-title').value;
+            const topic1Content = document.getElementById('topic1-content').value;
+            if (topic1Title && topic1Content) {
+                topics.push({
+                    id: "topic1",
+                    title: topic1Title,
+                    content: topic1Content
+                });
+            }
+            
+            const topic2Title = document.getElementById('topic2-title').value;
+            const topic2Content = document.getElementById('topic2-content').value;
+            if (topic2Title && topic2Content) {
+                topics.push({
+                    id: "topic2",
+                    title: topic2Title,
+                    content: topic2Content
+                });
+            }
+            
+            // Get vocabulary
+            const vocabulary = [];
+            const word1 = document.getElementById('word1').value;
+            const def1 = document.getElementById('def1').value;
+            if (word1 && def1) {
+                vocabulary.push({
+                    word: word1,
+                    definition: def1
+                });
+            }
+            
+            // Generate config.js content
+            return `/**
  * Chapter Configuration
  * This file contains all the content for the chapter.
- * Edit this file to change content without touching the code structure.
  */
 
 // Check if chapterConfig already exists to avoid redeclaration
@@ -88,24 +258,32 @@ if (!window.chapterConfig) {
     window.chapterConfig = {
         // Basic chapter information
         chapterInfo: {
-            title: "${escapeString(chapterInfo.title)}",
-            subject: "${escapeString(chapterInfo.subject)}",
-            class: "${escapeString(chapterInfo.class)}",
-            chapter: ${chapterInfo.chapter},
-            description: "${escapeString(chapterInfo.description)}"
+            title: "${chapterTitle}",
+            subject: "${subject}",
+            class: "${classLevel}",
+            chapter: ${chapterNumber},
+            description: "${description}"
         },
         
         // Introduction section
         introduction: {
             highlights: [
-                ${highlights.map(h => `{
-                    icon: "${escapeString(h.icon)}",
-                    text: "${escapeString(h.text)}"
-                }`).join(',\n                ')}
+                {
+                    icon: "fas fa-child",
+                    text: "Key concept 1"
+                },
+                {
+                    icon: "fas fa-users",
+                    text: "Key concept 2"
+                }
             ],
             about: {
                 content: \`
-                    ${aboutContent}
+                    <p>In this chapter, we'll learn:</p>
+                    <ul>
+                        <li>First learning objective</li>
+                        <li>Second learning objective</li>
+                    </ul>
                 \`
             }
         },
@@ -113,262 +291,87 @@ if (!window.chapterConfig) {
         // Topic sections
         topics: [
             ${topics.map(t => `{
-                id: "${escapeString(t.id)}",
-                title: "${escapeString(t.title)}",
-                icon: "${escapeString(t.icon)}",
-                navTitle: "${escapeString(t.navTitle)}",
-                image: "${escapeString(t.image)}",
-                content: \`
-                    ${t.content}
-                \`,
-                ${t.question ? `question: {
-                    text: "${escapeString(t.question.text)}",
-                    options: [
-                        ${t.question.options.map(o => `"${escapeString(o)}"`).join(',\n                        ')}
-                    ],
-                    correctAnswer: ${t.question.correctAnswer}
-                }` : '// No question for this topic'}
+                id: "${t.id}",
+                title: "${t.title}",
+                icon: "fas fa-book-open",
+                navTitle: "${t.title}",
+                image: "images/placeholder.jpg",
+                content: \`${t.content}\`
             }`).join(',\n            ')}
         ],
         
         // New words and terms
         vocabulary: [
             ${vocabulary.map(v => `{
-                word: "${escapeString(v.word)}",
-                definition: "${escapeString(v.definition)}"
+                word: "${v.word}",
+                definition: "${v.definition}"
             }`).join(',\n            ')}
         ]
     };
 }`;
-}
-
-// Generate questions.js content
-function generateQuestionsJS() {
-    // Collect all questions by type
-    const questions = {
-        mcq: [],
-        fillBlanks: [],
-        truefalse: [],
-        shortAnswer: [],
-        longAnswer: [],
-        oneWordAnswers: [],
-        spellingTests: [],
-        sequenceQuestions: [],
-        flipCards: []
-    };
-    
-    // For each question type, get the added questions
-    Object.keys(questions).forEach(type => {
-        document.querySelectorAll(`.${type}-question`).forEach((item, index) => {
-            // Get common fields
-            const id = item.querySelector('.question-id')?.value || `${type}${index + 1}`;
+        }
+        
+        function generateQuestions() {
+            // Get MCQ questions
+            const mcqQuestions = [];
+            const mcq1 = document.getElementById('mcq1').value;
+            const mcq1Opt1 = document.getElementById('mcq1-opt1').value;
+            const mcq1Opt2 = document.getElementById('mcq1-opt2').value;
+            const mcq1Opt3 = document.getElementById('mcq1-opt3').value;
             
-            // Different handling based on question type
-            let questionObj = { id };
-            
-            switch (type) {
-                case 'mcq':
-                    // Get question text
-                    questionObj.question = item.querySelector('.question-text')?.value || '';
-                    
-                    // Get options and correct answer
-                    const options = [];
-                    let correctAnswer = 0;
-                    item.querySelectorAll('.option-item').forEach((option, i) => {
-                        const optionText = option.querySelector('.option-text')?.value || '';
-                        if (optionText) {
-                            options.push(optionText);
-                            // Check if this option is marked as correct
-                            if (option.querySelector('input[type="radio"]:checked')) {
-                                correctAnswer = i;
-                            }
-                        }
-                    });
-                    
-                    questionObj.options = options;
-                    questionObj.correctAnswer = correctAnswer;
-                    questionObj.explanation = item.querySelector('.explanation-text')?.value || '';
-                    break;
-                    
-                case 'fillBlanks':
-                    questionObj.question = item.querySelector('.question-text')?.value || '';
-                    questionObj.correctAnswer = item.querySelector('.correct-answer')?.value || '';
-                    questionObj.explanation = item.querySelector('.explanation-text')?.value || '';
-                    break;
-                    
-                case 'truefalse':
-                    questionObj.question = item.querySelector('.question-text')?.value || '';
-                    
-                    // Get whether true or false is the correct answer
-                    const correctAnswerInput = item.querySelector('input[name^="tf-"]:checked');
-                    questionObj.correctAnswer = correctAnswerInput ? correctAnswerInput.value === 'true' : false;
-                    
-                    questionObj.explanation = item.querySelector('.explanation-text')?.value || '';
-                    break;
-                    
-                case 'shortAnswer':
-                case 'longAnswer':
-                    questionObj.question = item.querySelector('.question-text')?.value || '';
-                    questionObj.modelAnswer = item.querySelector('.model-answer')?.value || '';
-                    questionObj.explanation = item.querySelector('.explanation-text')?.value || '';
-                    break;
-                    
-                case 'oneWordAnswers':
-                    questionObj.question = item.querySelector('.question-text')?.value || '';
-                    questionObj.correctAnswer = item.querySelector('.correct-answer')?.value || '';
-                    questionObj.explanation = item.querySelector('.explanation-text')?.value || '';
-                    break;
-                    
-                case 'spellingTests':
-                    questionObj.word = item.querySelector('.complete-word')?.value || '';
-                    questionObj.blankedWord = item.querySelector('.blanked-word')?.value || '';
-                    questionObj.hint = item.querySelector('.hint-text')?.value || '';
-                    questionObj.explanation = item.querySelector('.explanation-text')?.value || '';
-                    break;
-                    
-                case 'sequenceQuestions':
-                    // To be implemented
-                    break;
-                    
-                case 'flipCards':
-                    questionObj.front = item.querySelector('.front-text')?.value || '';
-                    questionObj.back = item.querySelector('.back-text')?.value || '';
-                    questionObj.explanation = item.querySelector('.explanation-text')?.value || '';
-                    break;
+            if (mcq1 && mcq1Opt1) {
+                const options = [mcq1Opt1];
+                if (mcq1Opt2) options.push(mcq1Opt2);
+                if (mcq1Opt3) options.push(mcq1Opt3);
+                
+                mcqQuestions.push({
+                    id: "mcq1",
+                    question: mcq1,
+                    options: options,
+                    correctAnswer: 0 // First option is always correct
+                });
             }
             
-            // Add question to the appropriate category
-            if (isValidQuestion(questionObj, type)) {
-                questions[type].push(questionObj);
-            }
-        });
-    });
-    
-    // Generate the questions code
-    return `// Comprehensive Question Bank 
+            // Generate questions.js content
+            return `// Question Bank
 
-// Check if questionBank already exists before declaring
 if (!window.questionBank) {
     window.questionBank = {
         // Multiple Choice Questions (MCQs)
         mcq: [
-            ${questions.mcq.map(q => `{
-                id: "${escapeString(q.id)}",
-                question: "${escapeString(q.question)}",
+            ${mcqQuestions.map(q => `{
+                id: "${q.id}",
+                question: "${q.question}",
                 options: [
-                    ${q.options.map(o => `"${escapeString(o)}"`).join(',\n                    ')}
+                    ${q.options.map(o => `"${o}"`).join(',\n                    ')}
                 ],
                 correctAnswer: ${q.correctAnswer},
-                explanation: "${escapeString(q.explanation)}"
+                explanation: "Explanation about this question"
             }`).join(',\n            ')}
         ],
 
         // Fill in the Blanks
-        fillBlanks: [
-            ${questions.fillBlanks.map(q => `{
-                id: "${escapeString(q.id)}",
-                question: "${escapeString(q.question)}",
-                correctAnswer: "${escapeString(q.correctAnswer)}",
-                explanation: "${escapeString(q.explanation)}"
-            }`).join(',\n            ')}
-        ],
+        fillBlanks: [],
 
         // True or False
-        truefalse: [
-            ${questions.truefalse.map(q => `{
-                id: "${escapeString(q.id)}",
-                question: "${escapeString(q.question)}",
-                correctAnswer: ${q.correctAnswer},
-                explanation: "${escapeString(q.explanation)}"
-            }`).join(',\n            ')}
-        ],
+        truefalse: [],
 
-        // Short Answer Questions
-        shortAnswer: [
-            ${questions.shortAnswer.map(q => `{
-                id: "${escapeString(q.id)}",
-                question: "${escapeString(q.question)}",
-                modelAnswer: "${escapeString(q.modelAnswer)}",
-                explanation: "${escapeString(q.explanation)}"
-            }`).join(',\n            ')}
-        ],
-
-        // Long Answer Questions
-        longAnswer: [
-            ${questions.longAnswer.map(q => `{
-                id: "${escapeString(q.id)}",
-                question: "${escapeString(q.question)}",
-                modelAnswer: "${escapeString(q.modelAnswer)}",
-                explanation: "${escapeString(q.explanation)}"
-            }`).join(',\n            ')}
-        ],
-
-        // One-Word Answer Questions
-        oneWordAnswers: [
-            ${questions.oneWordAnswers.map(q => `{
-                id: "${escapeString(q.id)}",
-                question: "${escapeString(q.question)}",
-                correctAnswer: "${escapeString(q.correctAnswer)}",
-                explanation: "${escapeString(q.explanation)}"
-            }`).join(',\n            ')}
-        ],
-
-        // Spelling Tests
-        spellingTests: [
-            ${questions.spellingTests.map(q => `{
-                id: "${escapeString(q.id)}",
-                word: "${escapeString(q.word)}",
-                blankedWord: "${escapeString(q.blankedWord)}",
-                hint: "${escapeString(q.hint)}",
-                explanation: "${escapeString(q.explanation)}"
-            }`).join(',\n            ')}
-        ],
-
-        // Flip Cards
-        flipCards: [
-            ${questions.flipCards.map(q => `{
-                id: "${escapeString(q.id)}",
-                front: "${escapeString(q.front)}",
-                back: "${escapeString(q.back)}",
-                explanation: "${escapeString(q.explanation)}"
-            }`).join(',\n            ')}
-        ]
+        // Other question types...
     };
 }`;
-}
-
-// Helper function to check if a question has the required fields
-function isValidQuestion(question, type) {
-    switch (type) {
-        case 'mcq':
-            return question.question && question.options && question.options.length > 1;
-        case 'fillBlanks':
-        case 'oneWordAnswers':
-            return question.question && question.correctAnswer;
-        case 'truefalse':
-            return question.question;
-        case 'shortAnswer':
-        case 'longAnswer':
-            return question.question && question.modelAnswer;
-        case 'spellingTests':
-            return question.word && question.blankedWord;
-        case 'flipCards':
-            return question.front && question.back;
-        default:
-            return false;
-    }
-}
-
-// Helper function to escape special characters in strings
-function escapeString(str) {
-    if (typeof str !== 'string') return '';
-    return str
-        .replace(/\\/g, '\\\\')
-        .replace(/"/g, '\\"')
-        .replace(/\n/g, '\\n')
-        .replace(/\r/g, '\\r')
-        .replace(/\t/g, '\\t');
-}
-</script>
+        }
+        
+        function downloadFile(filename, content) {
+            const blob = new Blob([content], {type: 'text/javascript'});
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            
+            link.href = url;
+            link.download = filename;
+            link.click();
+            
+            setTimeout(() => URL.revokeObjectURL(url), 1000);
+        }
+    </script>
 </body>
 </html>
