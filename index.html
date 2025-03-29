@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Textbook</title>
+    
+    <!-- Add favicon to prevent 404 error -->
+    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+    
+    <!-- Load styles -->
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="sld-helpers.css">
+    <link rel="stylesheet" href="accessible-exam.css">
+</head>
+<body>
+    <div id="app-container">
+        <div id="loading-spinner">
+            <div class="spinner"></div>
+            <p>Loading content...</p>
+        </div>
+    </div>
+
+    <!-- Load scripts in correct order with proper error handling -->
+    <script>
+        // Debug helper
+        function logDebug(message) {
+            console.log(`[DEBUG] ${message}`);
+            
+            // Also show in UI for easier debugging
+            const debugElement = document.getElementById('debug-output');
+            if (debugElement) {
+                const newMessage = document.createElement('div');
+                newMessage.textContent = message;
+                debugElement.appendChild(newMessage);
+            }
+        }
+        
+        // Add debug output element
+        const debugOutput = document.createElement('div');
+        debugOutput.id = 'debug-output';
+        debugOutput.style.cssText = 'position:fixed; bottom:0; left:0; background:rgba(0,0,0,0.7); color:white; padding:10px; max-height:200px; overflow-y:auto; width:100%; font-family:monospace; font-size:12px; z-index:10000; display:none;';
+        document.body.appendChild(debugOutput);
+        
+        // Show debug with double-click anywhere
+        document.addEventListener('dblclick', function() {
+            const debugEl = document.getElementById('debug-output');
+            if (debugEl) {
+                debugEl.style.display = debugEl.style.display === 'none' ? 'block' : 'none';
+            }
+        });
+
+        // First, create a placeholder for configuration
+        window.chapterConfig = window.chapterConfig || {
+            chapterInfo: {
+                title: "Interactive Chapter",
+                subject: "EVS", 
+                class: "Class 4"
+            },
+            topics: []
+        };
+        
+        // Create placeholder for question bank
+        window.questionBank = window.questionBank || {
+            mcq: [],
+            fillBlanks: [],
+            truefalse: [],
+            shortAnswer: [],
+            longAnswer: [],
+            oneWordAnswers: [],
+            spellingTests: [],
+            sequenceQuestions: [],
+            flipCards: []
+        };
+        
+        // Load scripts one by one in sequence
+        function loadScript(url) {
+            return new Promise((resolve, reject) => {
+                logDebug(`Loading ${url}...`);
+                const script = document.createElement('script');
+                script.src = url;
+                script.onload = () => {
+                    logDebug(`Loaded ${url}`);
+                    resolve();
+                };
+                script.onerror = () => {
+                    logDebug(`Failed to load ${url}`);
+                    reject(new Error(`Failed to load ${url}`));
+                };
+                document.body.appendChild(script);
+            });
+        }
+        
+        // List all scripts in correct loading order
+        const scripts = [
+            'placeholder.js',          // Image placeholder handling
+            'config.js',               // Configuration
+            'core/core.js',            // Core application
+            'components/components.js', // UI components
+            'questions.js',            // Question data
+            'sld-helpers.js'           // Accessibility helpers  
+        ];
+        
+        // Load scripts sequentially
+        async function loadAllScripts() {
+            for (const script of scripts) {
+                try {
+                    await loadScript(script);
+                } catch (error) {
+                    logDebug(`Error loading ${script}: ${error.message}`);
+                    // Continue with other scripts even if one fails
+                }
+            }
+            
+            // After all scripts are loaded, initialize application
+            initializeApp();
+        }
+        
+        // Initialize application after scripts are loaded
+        function initializeApp() {
+            logDebug("Initializing application...");
+            try {
+                if (!window.SCORMApp) {
+                    throw new Error("Core application class not loaded properly");
+                }
+                
+                const app = new SCORMApp();
+                
+                // Set configuration directly
+                app.config = window.chapterConfig;
+                logDebug("Using configuration: " + JSON.stringify(app.config.chapterInfo));
+                
+                // Register services
+                app.registerService('navigation', new NavigationService(app));
+                app.registerService('accessibility', new AccessibilityService(app));
+                app.registerService('audio', new AudioService(app));
+                app.registerService('state', new StateService(app));
+                
+                // Register components
+                registerComponents(app).then(() => {
+                    // Initialize UI
+                    app.initializeUI();
+                    
+                    // Mark as initialized
+                    app.isInitialized = true;
+                    
+                    // Hide spinner
+                    const spinner = document.getElementById('loading-spinner');
+                    if (spinner) spinner.style.display = 'none';
+                    
+                    logDebug("Application initialized successfully");
+                }).catch(error => {
+                    logDebug("Error registering components: " + error.message);
+                    showErrorMessage("Failed to initialize components");
+                });
+                
+            } catch (error) {
+                logDebug("Initialization error: " + error.message);
+                showErrorMessage("Failed to initialize application");
+            }
+        }
+        
+        // Register all components
+        async function registerComponents(app) {
+            logDebug("Registering components...");
+            if (!window.LoaderComponent || 
+                !window.IntroComponent || 
+                !window.TopicComponent || 
+                !window.ExamComponent || 
+                !window.ResultsComponent) {
+                throw new Error("Components not loaded properly");
+            }
+            
+            await app.registerComponent('loader', new LoaderComponent(app));
+            logDebug("Loader component registered");
+            
+            await app.registerComponent('intro', new IntroComponent(app));
+            logDebug("Intro component registered");
+            
+            await app.registerComponent('topic', new TopicComponent(app));
+            logDebug("Topic component registered");
+            
+            await app.registerComponent('exam', new ExamComponent(app));
+            logDebug("Exam component registered");
+            
+            await app.registerComponent('results', new ResultsComponent(app));
+            logDebug("Results component registered");
+            
+            return true;
+        }
+        
+        // Show error message in UI
+        function showErrorMessage(message) {
+            const appContainer = document.getElementById('app-container');
+            if (appContainer) {
+                appContainer.innerHTML = `
+                    <div class="error-message" style="text-align:center; padding:20px; color:#e74c3c;">
+                        <h2>Initialization Error</h2>
+                        <p>${message}</p>
+                        <p>Please check the browser console for details or double-click anywhere to view debug output.</p>
+                        <button onclick="location.reload()">Reload Page</button>
+                    </div>
+                `;
+            }
+        }
+        
+        // Start loading process
+        document.addEventListener('DOMContentLoaded', loadAllScripts);
+    </script>
+</body>
+</html>

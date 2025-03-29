@@ -1,0 +1,223 @@
+/**
+ * SLD Helper Styles - Additional styling for children with Specific Learning Disabilities
+ */
+
+/* SLD Control Panel */
+.sld-panel {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    z-index: 1000;
+}
+
+.sld-panel-toggle {
+    background-color: var(--primary);
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    font-size: 18px;
+}
+
+.sld-panel-toggle:hover {
+    background-color: var(--primary-dark);
+}
+
+.sld-panel-content {
+    position: absolute;
+    top: 50px;
+    right: 0;
+    width: 240px;
+    background-color: white;
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    display: none;
+}
+
+.sld-panel-content.visible {
+    display: block;
+    animation: slideIn 0.3s ease-out;
+}
+
+.sld-panel h3 {
+    margin-top: 0;
+    color: var(--primary);
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.sld-option {
+    margin-bottom: 15px;
+}
+
+.sld-option label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: var(--dark-text);
+}
+
+.sld-buttons {
+    display: flex;
+    gap: 5px;
+}
+
+.sld-button {
+    flex: 1;
+    padding: 8px 0;
+    border: 1px solid #ddd;
+    background-color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.sld-button.active {
+    background-color: var(--primary);
+    color: white;
+    border-color: var(--primary);
+}
+
+.sld-apply-btn {
+    background-color: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px;
+    width: 100%;
+    margin-top: 10px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.sld-apply-btn:hover {
+    background-color: var(--accent-dark);
+}
+
+/* Text size classes */
+.text-size-small .question-text,
+.text-size-small .option-label,
+.text-size-small .feedback-content {
+    font-size: 16px;
+}
+
+.text-size-medium .question-text,
+.text-size-medium .option-label,
+.text-size-medium .feedback-content {
+    font-size: 20px;
+}
+
+.text-size-large .question-text,
+.text-size-large .option-label,
+.text-size-large .feedback-content {
+    font-size: 24px;
+}
+
+/* Font type classes */
+.font-type-regular .question-text,
+.font-type-regular .option-label,
+.font-type-regular .feedback-content {
+    font-family: 'Comic Sans MS', 'Arial', sans-serif;
+}
+
+.font-type-dyslexic .question-text,
+.font-type-dyslexic .option-label,
+.font-type-dyslexic .feedback-content {
+    font-family: 'OpenDyslexic', 'Comic Sans MS', 'Arial', sans-serif;
+    letter-spacing: 0.05em;
+    word-spacing: 0.1em;
+    line-height: 1.6;
+}
+
+/* High contrast mode */
+.high-contrast {
+    --primary: #000080; /* Navy */
+    --primary-dark: #000066;
+    --primary-light: #9999ff;
+    --accent: #800000; /* Maroon */
+    --accent-dark: #660000;
+    --accent-light: #ffcccc;
+    --light-bg: #ffffcc; /* Light yellow */
+    --dark-text: #000000; /* Black */
+    --white: #ffffff; /* White */
+}
+
+.high-contrast .question-text {
+    color: #000000;
+}
+
+.high-contrast .option {
+    background-color: #ffffcc;
+    border: 2px solid #000000;
+}
+
+.high-contrast .submit-button {
+    background-color: #800000;
+    color: #ffffff;
+    border: 2px solid #000000;
+}
+
+/* Simplified UI mode */
+.simplified-ui .question-type-grid {
+    grid-template-columns: 1fr;
+}
+
+.simplified-ui .question-navigation {
+    flex-direction: column;
+    gap: 10px;
+}
+
+.simplified-ui .nav-button,
+.simplified-ui .submit-button {
+    width: 100%;
+    padding: 15px;
+    font-size: 20px;
+}
+
+.simplified-ui .option {
+    padding: 15px;
+}
+
+.simplified-ui .option input[type="radio"] {
+    width: 25px;
+    height: 25px;
+}
+
+.simplified-ui .tts-mini-button {
+    width: 48px;
+    height: 48px;
+}
+
+/* TTS word highlighting */
+.tts-word {
+    display: inline-block;
+    transition: all 0.2s;
+}
+
+.tts-word.highlight {
+    background-color: var(--accent-light);
+    color: var(--dark-text);
+    border-radius: 3px;
+    padding: 0 2px;
+}
+
+/* Animation for celebration */
+@keyframes slideIn {
+    from { transform: translateY(-20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+/* OpenDyslexic font loading (if available) */
+@font-face {
+    font-family: 'OpenDyslexic';
+    src: url('fonts/OpenDyslexic-Regular.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}

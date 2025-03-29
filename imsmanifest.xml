@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest identifier="com.example.journey" xmlns="http://www.imsproject.org/xsd/imscp_rootv1p1p2">
+    <metadata>
+        <schema>ADL SCORM</schema>
+        <schemaversion>1.2</schemaversion>
+    </metadata>
+    <organizations default="org1">
+        <organization identifier="org1">
+            <title>Journey to School Adventure</title>
+            <item identifier="item1" identifierref="resource1">
+                <title>Game</title>
+            </item>
+        </organization>
+    </organizations>
+    <resources>
+        <resource identifier="resource1" type="webcontent" href="index.html">
+            <file href="index.html"/>
+            <file href="styles.css"/>
+            <file href="scripts.js"/>
+            <file href="scorm-api-wrapper.js"/>
+        </resource>
+    </resources>
+</manifest>

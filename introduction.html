@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Introduction: Going to School</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .intro-container {
+            text-align: left;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .topic-list {
+            background-color: #f5f6fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        
+        .topic-list li {
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+        
+        .highlight {
+            color: #4b7bec;
+            font-weight: bold;
+        }
+        
+        .image-gallery {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        .image-gallery img {
+            width: 150px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .btn-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <div class="intro-container">
+            <h1>Chapter 1: Going to School</h1>
+            
+            <p>Welcome to an exciting journey exploring various ways children around the world travel to school! This chapter explores the diverse methods of transportation used by children in different regions, highlighting how geography, climate, and local resources influence these choices.</p>
+            
+            <div class="topic-list">
+                <h2>Key Topics</h2>
+                <ul>
+                    <li><span class="highlight">Water Crossings:</span> Learn how children cross rivers and water bodies using bamboo bridges, cement bridges, trolleys, and boats like vallam.</li>
+                    <li><span class="highlight">Desert Travel:</span> Discover how camels and camel-carts become essential transportation in sandy desert regions.</li>
+                    <li><span class="highlight">Rural Transportation:</span> Explore traditional vehicles like bullock-carts that are perfect for rural terrain.</li>
+                    <li><span class="highlight">Eco-friendly Options:</span> Find out why bicycles are one of the most popular and environmentally friendly ways to get to school.</li>
+                    <li><span class="highlight">Challenging Terrains:</span> Learn about walking techniques for snowy, rocky, and forest paths.</li>
+                    <li><span class="highlight">Cultural Significance:</span> Understand how transportation methods reflect local culture and adaptation to environment.</li>
+                </ul>
+            </div>
+            
+            <h2>Why This Matters</h2>
+            <p>Understanding different modes of transportation helps us appreciate the challenges many children face in getting an education. It also highlights human ingenuity in adapting to various environments and reminds us of the importance of eco-friendly transportation options.</p>
+            
+            <div class="image-gallery">
+                <img src="images/bamboo-bridge.jpg" alt="Bamboo Bridge" width="150" height="100" loading="lazy" class="optimized-image">
+                <img src="images/trolley.jpg" alt="Trolley" width="150" height="100" loading="lazy" class="optimized-image">
+                <img src="images/vallam.jpg" alt="Vallam Boat" width="150" height="100" loading="lazy" class="optimized-image">
+                <img src="images/camel-cart.jpg" alt="Camel Cart" width="150" height="100" loading="lazy" class="optimized-image">
+            </div>
+            
+            <div class="btn-container">
+                <button onclick="window.location.href='index.html'">Start Adventure Game</button>
+                <button class="tf-button" onclick="window.location.href='index.html?quiz=true'">Take True/False Quiz</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Check if the user wants to directly go to the quiz
+        window.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('quiz') === 'true') {
+                window.location.href = 'index.html#tf-quiz';
+            }
+        });
+    </script>
+</body>
+</html>
